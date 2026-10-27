@@ -1,0 +1,115 @@
+using Microsoft.EntityFrameworkCore;
+using Vitalia.Application.Interfaces.Repositories;
+using Vitalia.Domain.Entities;
+using Vitalia.Domain.Enums;
+using Vitalia.Infrastructure.Data;
+
+namespace Vitalia.Infrastructure.Repositories;
+
+public class ProductRepository : IProductRepository
+{
+    private readonly VitaliaDbContext _context;
+
+    public ProductRepository(VitaliaDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<Product?> GetByIdAsync(long id)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<IEnumerable<Product>> GetByCategoryIdAsync(long categoryId)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p => p.CategoryId == categoryId)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Product>> GetByStatusAsync(ProductStatus status)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p => p.Status == status)
+            .ToListAsync();
+    }
+
+    public async Task<(IEnumerable<Product> Items, int TotalItems)> GetPagedAsync(
+        int page,
+        int pageSize,
+        string sortBy,
+        string sortDirection)
+    {
+        var query = _context.Products
+            .AsNoTracking();
+
+        var totalItems = await query.CountAsync();
+
+        var descending = sortDirection.Equals(
+            "desc",
+            StringComparison.OrdinalIgnoreCase
+        );
+
+        query = sortBy.ToLowerInvariant() switch
+        {
+            "name" => descending
+                ? query.OrderByDescending(p => p.Name)
+                : query.OrderBy(p => p.Name),
+
+            "price" => descending
+                ? query.OrderByDescending(p => p.Price)
+                : query.OrderBy(p => p.Price),
+
+            "stock" => descending
+                ? query.OrderByDescending(p => p.Stock)
+                : query.OrderBy(p => p.Stock),
+
+            "createdat" => descending
+                ? query.OrderByDescending(p => p.CreatedAt)
+                : query.OrderBy(p => p.CreatedAt),
+
+            _ => descending
+                ? query.OrderByDescending(p => p.Id)
+                : query.OrderBy(p => p.Id)
+        };
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalItems);
+    }
+
+    public async Task AddAsync(Product product)
+    {
+        await _context.Products.AddAsync(product);
+    }
+
+    public void Update(Product product)
+    {
+        _context.Entry(product).State = EntityState.Modified;
+    }
+
+    public void Delete(Product product)
+    {
+        _context.Products.Remove(product);
+    }
+
+    public async Task<bool> ExistsAsync(long id)
+    {
+        return await _context.Products
+            .AnyAsync(p => p.Id == id);
+    }
+}
