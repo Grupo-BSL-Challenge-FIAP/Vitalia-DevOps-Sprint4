@@ -13,7 +13,7 @@ az group create --name $ResourceGroup --location $Location | Out-Null
 Write-Host "Plano de serviço: $Plan"
 az appservice plan show --name $Plan --resource-group $ResourceGroup --query name -o tsv 2>$null
 if ($LASTEXITCODE -ne 0) {
-    az appservice plan create --name $Plan --resource-group $ResourceGroup --location $Location --sku F1
+    az appservice plan create --name $Plan --resource-group $ResourceGroup --location $Location --is-linux false --sku F1
     if ($LASTEXITCODE -ne 0) { throw "Falha ao criar o plano de serviço" }
 }
 
