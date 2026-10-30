@@ -1,43 +1,28 @@
-<p align="center">
-  <img width="270" height="270" alt="image" src="https://github.com/user-attachments/assets/d72bd46f-639c-4197-94b0-0e3c37791250" />
-</p>
+# 🐾 Vitalia API — Módulo Comercial
 
-# 🐾 Vitalia API - Módulo Comercial
+**Sprint 4 · DevOps Tools & Cloud Computing · CI/CD com Azure DevOps**
 
-API REST desenvolvida em **ASP.NET Core / .NET 10** para o módulo comercial da plataforma **Vitalia**.
+API REST em **ASP.NET Core / .NET 10** do módulo comercial da plataforma **Vitalia** (categorias, produtos, carrinho, checkout e pedidos), publicada no **Azure Web App** por uma pipeline de **CI/CD no Azure DevOps** e persistindo dados em um **Oracle Database em nuvem (Oracle)**.
 
-A API é responsável pelo gerenciamento de **categorias, produtos, carrinho de compras, checkout e pedidos**, utilizando **Oracle Database com Entity Framework Core** para persistência relacional.
-
-A autenticação é integrada ao backend Java do Vitalia: o serviço Java autentica o usuário e emite o JWT, que é enviado pelo cliente nas requisições à API .NET. A API .NET valida o token localmente para identificar o usuário e suas permissões.
+> A documentação técnica completa da API (entidades, endpoints, autenticação, HATEOAS, status codes) está em [`docs/README.md`](docs/README.md).
 
 ---
 
 ## 📑 Índice
 
 - [👥 Integrantes](#-integrantes)
-- [📚 Sobre o Projeto](#-sobre-o-projeto)
-- [🏗️ Arquitetura](#-arquitetura)
-- [🧭 Diagrama de Arquitetura](#-diagrama-de-arquitetura)
-- [📁 Estrutura da Solução](#-estrutura-da-solução)
-- [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [📦 Entidades](#-entidades)
-- [🔁 Relacionamentos](#-relacionamentos)
-- [👤 Usuários de Avaliação](#-usuários-de-avaliação)
-- [🔐 Autenticação e Autorização](#-autenticação-e-autorização)
-- [☕ Integração com a API Java](#-integração-com-a-api-java)
-- [📡 Endpoints](#-endpoints)
-- [🔗 HATEOAS](#-hateoas)
-- [📄 HTTP Status Codes](#-http-status-codes)
-- [📘 Swagger / OpenAPI](#-swagger--openapi)
-- [🩺 Health Checks](#-health-checks)
-- [📝 Logs com Serilog](#-logs-com-serilog)
-- [📊 OpenTelemetry e Prometheus](#-opentelemetry-e-prometheus)
-- [🗄️ Banco de Dados e Migrations](#-banco-de-dados-e-migrations)
-- [⚙️ Como Executar](#-como-executar)
-- [🧪 Testes](#-testes)
-- [📈 Cobertura de Testes](#-cobertura-de-testes)
-- [📌 Funcionalidades Implementadas](#-funcionalidades-implementadas)
-- [🌐 Ambiente Publicado](#-ambiente-publicado)
+- [🔗 Links da entrega](#-links-da-entrega)
+- [📚 Descrição da solução](#-descrição-da-solução)
+- [🚀 Stack de tecnologias](#-stack-de-tecnologias)
+- [🧭 Diagrama de arquitetura e fluxo CI/CD](#-diagrama-de-arquitetura-e-fluxo-cicd)
+- [🗄️ Banco de dados em nuvem](#️-banco-de-dados-em-nuvem)
+- [☁️ Infraestrutura no Azure](#️-infraestrutura-no-azure)
+- [🧰 Projeto no Azure DevOps](#-projeto-no-azure-devops)
+- [⚙️ Pipeline de CI/CD](#️-pipeline-de-cicd)
+- [🔐 Variáveis protegidas](#-variáveis-protegidas)
+- [✅ Como validar a aplicação](#-como-validar-a-aplicação)
+- [🧪 Testes automatizados](#-testes-automatizados)
+- [📁 Estrutura do repositório](#-estrutura-do-repositório)
 
 ---
 
@@ -73,974 +58,337 @@ A autenticação é integrada ao backend Java do Vitalia: o serviço Java autent
   </tr>
 </table>
 
----
-
-## 📚 Sobre o Projeto
-
-O **Vitalia** é uma solução voltada ao cuidado e à saúde de pets. Dentro da arquitetura geral da solução, esta API em .NET representa o **módulo comercial**, concentrando as operações de catálogo e compra.
-
-As principais responsabilidades deste serviço são:
-
-- Gerenciamento de categorias;
-- Gerenciamento de produtos;
-- Controle de estoque;
-- Gerenciamento do carrinho do usuário autenticado;
-- Inclusão, atualização e remoção de itens do carrinho;
-- Checkout;
-- Criação de pedidos;
-- Atualização do ciclo de vida dos pedidos;
-- Persistência relacional no Oracle Database;
-- Autenticação JWT integrada ao backend Java;
-- HATEOAS nos endpoints de consulta;
-- Paginação, ordenação e filtros;
-- Monitoramento, logs, tracing e métricas;
-- Testes unitários e de integração.
 
 ---
 
-## 🏗️ Arquitetura
+## 🔗 Links da entrega
 
-O projeto foi estruturado seguindo princípios de **Clean Architecture**, com separação das responsabilidades entre as camadas **API, Application, Domain e Infrastructure**.
-
-A organização busca manter as regras de negócio independentes de detalhes de persistência, transporte HTTP e tecnologias externas.
-
-### Responsabilidades das camadas
-
-```txt
-Vitalia.API
-→ Controllers
-→ Configurations
-→ Exceptions
-→ Extensions
-→ HATEOAS
-→ Health Checks
-→ Swagger / OpenAPI
-→ Program.cs
-
-Vitalia.Application
-→ DTOs
-→ Interfaces
-→ Services
-→ Repository Contracts
-
-Vitalia.Domain
-→ Entities
-→ Enums
-→ Regras de Negócio
-
-Vitalia.Infrastructure
-→ DbContext
-→ Entity Framework Core
-→ Repositories
-→ Migrations
-
-Tests
-→ Vitalia.Domain.Tests
-→ Vitalia.Application.Tests
-→ Vitalia.API.IntegrationTests
-```
-
-A separação permite manter as regras de negócio desacopladas da persistência, da API HTTP e das ferramentas de infraestrutura.
-
-A aplicação também utiliza **Injeção de Dependência**, **Repository Pattern**, **Service Layer**, tratamento global de exceções e separação das regras de negócio da infraestrutura.
+| Item | Link |
+|------|------|
+| Repositório no GitHub | `<URL GitHub>` |
+| Projeto no Azure DevOps | https://dev.azure.com/Grupo-BSL-Vitalia/Sprint%204%20-%20Azure%20DevOps |
+| Vídeo no YouTube | `<URL vídeo>` |
+| Aplicação em nuvem (Azure Web App) | https://vitalia-sprint4-grupobsl.azurewebsites.net |
+| Swagger | https://vitalia-sprint4-grupobsl.azurewebsites.net/swagger/index.html |
+| Health check | https://vitalia-sprint4-grupobsl.azurewebsites.net/health/ready |
 
 ---
 
-## 🧭 Diagrama de Arquitetura
+## 📚 Descrição da solução
 
-![Arquitetura do Módulo Comercial Vitalia](docs/arquitetura-vitalia.png)
+O **Vitalia** é uma plataforma de saúde e cuidado de pets, com aplicativo mobile, dispositivos de monitoramento e serviços de backend. Esta entrega cobre o **módulo comercial**, uma API .NET responsável por:
 
-O **Oracle Database** é utilizado como banco relacional principal do módulo comercial.
+- cadastro e consulta de **categorias** e **produtos**;
+- **carrinho de compras**, **checkout** e **pedidos**;
+- validação de **JWT** emitido pelo backend Java do Vitalia, para identificar o usuário e suas permissões (por exemplo, a role `ADMIN`);
+- endpoints de **saúde** (`/health`, `/health/live`, `/health/ready`) e documentação **Swagger**.
 
-A autenticação é centralizada na API Java, enquanto a API .NET valida localmente os JWTs enviados pelo cliente.
-
----
-
-## 📁 Estrutura da Solução
-
-```txt
-Vitalia/
-│
-├── Vitalia.API/
-│   ├── Configurations/
-│   ├── Controllers/
-│   ├── Exceptions/
-│   ├── Extensions/
-│   ├── Hateoas/
-│   ├── Health/
-│   ├── Program.cs
-│   └── Vitalia.API.csproj
-│
-├── Vitalia.Application/
-│   ├── DTOs/
-│   ├── Interfaces/
-│   ├── Repositories/
-│   ├── Services/
-│   └── Vitalia.Application.csproj
-│
-├── Vitalia.Domain/
-│   ├── Common/
-│   ├── Entities/
-│   ├── Enums/
-│   └── Vitalia.Domain.csproj
-│
-├── Vitalia.Infrastructure/
-│   ├── Configurations/
-│   ├── Migrations/
-│   ├── Repositories/
-│   └── Vitalia.Infrastructure.csproj
-│
-└── tests/
-    ├── Vitalia.Domain.Tests/
-    ├── Vitalia.Application.Tests/
-    └── Vitalia.API.IntegrationTests/
-```
+O objetivo da Sprint 4 é automatizar o ciclo de entrega: a cada alteração de código na branch `master`, o Azure DevOps compila, executa os testes, gera e publica o artefato e faz o deploy no Azure Web App, sem etapas manuais.
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Stack de tecnologias
 
-- .NET 10
-- ASP.NET Core Web API
-- Entity Framework Core
-- Oracle Database
-- Swagger / OpenAPI
-- Swashbuckle
-- JWT Bearer Authentication
-- HATEOAS
-- Serilog
-- Serilog.Sinks.File
-- OpenTelemetry
-- Prometheus
-- xUnit
-- Moq
-- WebApplicationFactory
-- Coverlet
-- Repository Pattern
-- Service Layer
-- Injeção de Dependência
+| Camada | Tecnologia |
+|--------|------------|
+| Linguagem / runtime | C# · .NET 10 · ASP.NET Core Web API |
+| Persistência | Entity Framework Core + Oracle.EntityFrameworkCore |
+| Banco de dados em nuvem | Oracle Database |
+| Autenticação | JWT Bearer (emitido pelo backend Java) |
+| Documentação | Swagger |
+| Observabilidade | Serilog, Health Checks e OpenTelemetry |
+| Testes | xUnit, Moq e Microsoft.AspNetCore.Mvc.Testing |
+| Hospedagem | Azure App Service (Web App Windows, plano F1) |
+| CI/CD | Azure DevOps Pipelines (YAML) |
+| Controle de versão | GitHub e Azure Repos |
 
 ---
 
-## 📦 Entidades
+## 🧭 Diagrama de arquitetura e fluxo CI/CD
 
-### Category
+<!-- Adicionar png draw.io -->
 
-Representa uma categoria utilizada para organizar os produtos disponíveis no catálogo.
+![Diagrama de arquitetura e fluxo CI/CD](docs/arquitetura-devops-sprint4.png)
 
-### Product
+**Fluxo numerado (mesma numeração do diagrama):**
 
-Representa um produto comercializado pela plataforma, associado a uma categoria e com informações utilizadas no catálogo e no controle de estoque.
+| # | Etapa | Onde acontece |
+|---|-------|---------------|
+| 1 | O desenvolvedor faz commit e push na branch `master` | IDE / Git |
+| 2 | O push dispara o gatilho da pipeline | Azure DevOps Pipelines |
+| 3 | CI: restauração de dependências e build da API | Agente de pipeline |
+| 4 | CI: execução dos testes automatizados (xUnit) | Agente de pipeline |
+| 5 | CI: publicação da aplicação e compactação em `.zip` | Agente de pipeline |
+| 6 | CI: publicação do artefato `app` no Azure DevOps | Azure DevOps Artifacts |
+| 7 | CD: inicia somente após o novo artefato ser gerado | Azure DevOps Pipelines |
+| 8 | CD: autenticação no Azure pela service connection | Azure DevOps + Microsoft Entra ID |
+| 9 | CD: gravação das App Settings (variáveis protegidas) | Azure App Service |
+| 10 | CD: deploy do pacote no Web App (Zip Deploy) | Azure App Service |
+| 11 | O usuário final acessa a API por HTTPS | Azure App Service |
+| 12 | A API lê e grava dados no Oracle | Oracle FIAP (nuvem) |
+| 13 | O JWT é emitido pelo backend Java e validado pela API | Backend Java / API .NET |
 
-### Cart
-
-Representa o carrinho de compras associado ao usuário autenticado.
-
-### CartItem
-
-Representa um produto incluído em um carrinho, armazenando a quantidade selecionada pelo usuário.
-
-### Order
-
-Representa um pedido criado durante o checkout do carrinho.
-
-### OrderItem
-
-Representa um item pertencente a um pedido, preservando os dados necessários para o histórico da compra.
-
----
-
-## 🔁 Relacionamentos
-
-![Modelo de Relacionamentos do Módulo Comercial](docs/relacionamentos-vitalia.png)
-
-Os carrinhos e pedidos também são associados ao identificador do usuário autenticado recebido através do JWT emitido pelo backend Java do Vitalia.
+**Personas:** desenvolvedor (faz o commit e acompanha a pipeline) e usuário final (consome a API pelo app e pelo Swagger).
 
 ---
 
-## 👤 Usuários de Avaliação
+## 🗄️ Banco de dados em nuvem
 
-Foram criados usuários específicos para facilitar os testes da integração entre a API Java e a API .NET.
+- **Serviço:** Oracle Database da FIAP (`oracle.fiap.com.br:1521`, service name `ORCL`).
+- **Acesso:** a connection string fica em variável protegida da pipeline e chega ao Web App como App Setting. Ela nunca é versionada.
+- **Tabelas** (criadas pelas migrations do Entity Framework Core):
+  `TB_VITALIA_PRODUCT_CATEGORY`, `TB_VITALIA_PRODUCT`, `TB_VITALIA_CART`, `TB_VITALIA_CART_ITEM`, `TB_VITALIA_ORDERS` e `TB_VITALIA_ORDER_ITEM`.
+- **Script DDL:** [`db/script.sql`](db/script.sql), gerado a partir das migrations:
 
-| Perfil | E-mail |
-|---|---|
-| TUTOR | `avaliacao@tutor.com.br` |
-| ADMIN | `avaliacao@vitaliaadmin.com.br` |
-
-As senhas dos usuários de avaliação são fornecidas separadamente no arquivo de credenciais da entrega.
-
-> As contas acima foram criadas exclusivamente para demonstração e avaliação acadêmica.
-
-### Fluxo de teste
-
-1. Acesse o Swagger da API Java:  
-   `https://vitalia-txa9.onrender.com/swagger-ui/index.html#/`
-2. Realize login com um dos usuários de avaliação.
-3. Copie o JWT retornado.
-4. Acesse o Swagger da API .NET:  
-   `https://vitalia-dotnet.onrender.com/swagger`
-5. Clique em `Authorize`.
-6. Informe:
-
-```txt
-Bearer SEU_TOKEN_JWT
+```powershell
+dotnet ef migrations script `
+  --project Vitalia.Infrastructure/Vitalia.Infrastructure.csproj `
+  --startup-project Vitalia.API/Vitalia.API.csproj `
+  --context VitaliaDbContext `
+  --output db/script.sql
 ```
 
-7. Utilize o usuário `TUTOR` para testar carrinho, checkout e pedidos.
-8. Utilize o usuário `ADMIN` para testar cadastro de categorias, produtos e atualização do ciclo de vida dos pedidos.
+- **Conectividade:** a conexão Azure → Oracle FIAP foi validada pelo console Kudu do Web App (`tcpping oracle.fiap.com.br:1521`).
 
 ---
 
-## 🔐 Autenticação e Autorização
+## ☁️ Infraestrutura no Azure
 
-A autenticação dos usuários é responsabilidade do backend Java do Vitalia.
+| Recurso | Valor |
+|---------|-------|
+| Resource group | `rg-vitalia-sprint4` |
+| App Service Plan | `plan-vitalia-sprint4` |
+| Web App | `vitalia-sprint4-grupobsl` |
+| Runtime | .NET 10 |
+| Região | `canadacentral` |
 
-O fluxo utilizado é:
-
-```txt
-Usuário / Client
-      ↓ Login
-API Java / Auth
-      ↓ JWT
-Usuário / Client
-      ↓ Bearer JWT
-Vitalia.API (.NET)
-      ↓
-Validação local do token
-      ↓
-Acesso aos recursos comerciais
-```
-
-A API Java autentica o usuário e retorna o JWT ao cliente.
-
-O cliente utiliza esse token nas requisições direcionadas à API .NET através do header HTTP:
-
-```http
-Authorization: Bearer SEU_TOKEN_JWT
-```
-
-O token utiliza o identificador do usuário e suas roles para autorização.
-
-Roles reconhecidas pela solução:
-
-```txt
-TUTOR
-VETERINARIAN
-ADMIN
-```
-
-As operações administrativas de catálogo e de evolução do status dos pedidos exigem a role `ADMIN`.
-
-Operações relacionadas ao carrinho e aos pedidos do próprio usuário exigem autenticação.
-
-No Swagger, utilize o botão **Authorize** e informe:
-
-```txt
-Bearer SEU_TOKEN_JWT
-```
+Os recursos foram criados a partir do script documentado em [`docs/cria-infra.sh`](db/cria-infra.sh).
 
 ---
 
-## ☕ Integração com a API Java
+## 🧰 Projeto no Azure DevOps
 
-A autenticação do Vitalia é centralizada no backend Java.
-
-A API Java é responsável pelo cadastro dos usuários, autenticação e emissão dos tokens JWT utilizados pelo cliente para acessar os endpoints protegidos da API .NET.
-
-### Ambiente publicado
-
-Swagger UI:
-
-```txt
-https://vitalia-txa9.onrender.com/swagger-ui/index.html#/
-```
-
-### Ambiente local
-
-Swagger UI:
-
-```txt
-http://localhost:8080/swagger-ui/index.html
-```
-
-### Backend Java do Vitalia
-
-```txt
-https://github.com/Grupo-BSL-Challenge-FIAP/vitalia-JavaAdvanced-Sprint3
-```
-
-O fluxo para testar a integração é:
-
-1. Criar ou utilizar um usuário cadastrado na API Java;
-2. Realizar o login pela API Java;
-3. Copiar o JWT retornado;
-4. Abrir o Swagger da API .NET;
-5. Clicar em `Authorize`;
-6. Informar:
-
-```txt
-Bearer SEU_TOKEN_JWT
-```
-
-7. Executar os endpoints comerciais do Vitalia.
+| Configuração | Valor |
+|--------------|-------|
+| Organização | `Grupo-BSL-Vitalia` |
+| Project name | Sprint 4 - Azure DevOps |
+| Description | Projeto para entrega da Sprint 4 do professor `Antonio Sergio Rodrigues Figueiredo` e `Karlos Miguel Silva Lima`. Integrantes: RM563829 - Sofia Siqueira Fontes - 2TDSPG / RM565049 - Moisés Barsoti Andrade de Oliveira - 2TDSPO / RM564887 - Manuela de Lacerda Soares - 2TDSPG |
+| Visibility | Private |
+| Version control | Git |
+| Work item process | `Scrum` |
+| Acesso do professor | Convidado com nível de acesso **Basic** |
 
 ---
 
-## 📡 Endpoints
+## ⚙️ Pipeline de CI/CD
 
-### Category
+A pipeline é definida em YAML, no arquivo [`azure-pipelines.yml`](azure-pipelines.yml) na raiz do repositório, e está conectada ao repositório da aplicação.
 
-| Método | Endpoint | Descrição | Acesso |
-| --- | --- | --- | --- |
-| GET | `/api/Category` | Lista as categorias | Autenticado |
-| GET | `/api/Category/{id}` | Busca uma categoria por ID | Autenticado |
-| POST | `/api/Category` | Cria uma categoria | ADMIN |
-| PUT | `/api/Category/{id}` | Atualiza uma categoria | ADMIN |
-| DELETE | `/api/Category/{id}` | Remove uma categoria | ADMIN |
+**Gatilho:** a cada alteração na branch `master`.
 
-### Product
+### Estágio 1 - CI: Build e testes
 
-| Método | Endpoint | Descrição | Acesso |
-| --- | --- | --- | --- |
-| GET | `/api/Product` | Lista os produtos | Autenticado |
-| GET | `/api/Product/paged` | Lista produtos com paginação e ordenação | Autenticado |
-| GET | `/api/Product/{id}` | Busca um produto por ID | Autenticado |
-| GET | `/api/Product/category/{categoryId}` | Lista produtos de uma categoria | Autenticado |
-| GET | `/api/Product/status/{status}` | Lista produtos por status | Autenticado |
-| POST | `/api/Product` | Cria um produto | ADMIN |
-| PUT | `/api/Product/{id}` | Atualiza um produto | ADMIN |
-| DELETE | `/api/Product/{id}` | Remove um produto | ADMIN |
+| Ordem | Task | O que faz |
+|-------|------|-----------|
+| 1 | `DotNetCoreCLI@2 restore` | Restaura as dependências |
+| 2 | `DotNetCoreCLI@2 build` | Compila a API em modo Release |
+| 3 | `DotNetCoreCLI@2 test` | Executa os testes automatizados e publica os resultados |
+| 4 | `DotNetCoreCLI@2 publish` | Gera os arquivos publicados da API |
+| 5 | `ArchiveFiles@2` | Compacta a aplicação em `app.zip` |
+| 6 | `PublishPipelineArtifact@1` | Publica o artefato `app` no Azure DevOps |
 
-### Paginação e ordenação de produtos
+### Estágio 2 - CD: Deploy no Azure Web App
 
-O endpoint:
+O estágio depende do CI (`dependsOn`) e só executa depois que o artefato foi gerado.
 
-```http
-GET /api/Product/paged
-```
+| Ordem | Task | O que faz |
+|-------|------|-----------|
+| 1 | `DownloadPipelineArtifact@2` | Baixa o artefato `app` |
+| 2 | `AzureAppServiceSettings@1` | Grava as App Settings a partir das variáveis protegidas |
+| 3 | `AzureWebApp@1` | Faz o deploy do `app.zip` no Web App (Zip Deploy) |
 
-aceita os seguintes parâmetros:
+**Autenticação no Azure:** service connection `azure-vitalia-sprint4` (Azure Resource Manager, workload identity federation).
 
-| Parâmetro | Descrição | Padrão |
-| --- | --- | --- |
-| `page` | Número da página | `1` |
-| `pageSize` | Quantidade de registros por página | `10` |
-| `sortBy` | Campo utilizado na ordenação | `id` |
-| `sortDirection` | Direção da ordenação (`asc` ou `desc`) | `asc` |
-
-Campos aceitos em `sortBy`:
-
-```txt
-id
-name
-price
-stock
-createdAt
-```
-
-Exemplo:
-
-```http
-GET /api/Product/paged?page=1&pageSize=10&sortBy=price&sortDirection=desc
-```
-
-O valor de `pageSize` deve estar entre `1` e `100`.
-
-Parâmetros de paginação ou ordenação inválidos retornam `400 Bad Request`.
-
-Além da paginação, a API permite filtros por categoria e status:
-
-```http
-GET /api/Product/category/{categoryId}
-GET /api/Product/status/{status}
-```
-
-### Cart
-
-| Método | Endpoint | Descrição | Acesso |
-| --- | --- | --- | --- |
-| GET | `/api/Cart` | Obtém o carrinho do usuário autenticado | Autenticado |
-| GET | `/api/Cart/{id}` | Busca um carrinho por ID | Autenticado |
-| POST | `/api/Cart/{cartId}/items` | Adiciona um produto ao carrinho | Autenticado |
-| PUT | `/api/Cart/{cartId}/items/{productId}` | Atualiza a quantidade de um produto | Autenticado |
-| DELETE | `/api/Cart/{cartId}/items/{productId}` | Remove um produto do carrinho | Autenticado |
-
-### Order
-
-| Método | Endpoint | Descrição | Acesso |
-| --- | --- | --- | --- |
-| GET | `/api/Order/{id}` | Busca um pedido por ID | Autenticado |
-| GET | `/api/Order/my-orders` | Lista os pedidos do usuário autenticado | Autenticado |
-| POST | `/api/Order/checkout/{cartId}` | Realiza o checkout do carrinho | Autenticado |
-| PUT | `/api/Order/{id}/confirm` | Confirma um pedido | ADMIN |
-| PUT | `/api/Order/{id}/process` | Coloca um pedido em processamento | ADMIN |
-| PUT | `/api/Order/{id}/ship` | Marca um pedido como enviado | ADMIN |
-| PUT | `/api/Order/{id}/deliver` | Marca um pedido como entregue | ADMIN |
-| PUT | `/api/Order/{id}/cancel` | Cancela um pedido | Autenticado |
-
-### Ciclo de vida do pedido
-
-```txt
-PENDING
-   ↓
-CONFIRMED
-   ↓
-PROCESSING
-   ↓
-SHIPPED
-   ↓
-DELIVERED
-```
-
-Um pedido também pode assumir o status:
-
-```txt
-CANCELLED
-```
-
-Durante o checkout, a API cria o pedido, registra seus itens, atualiza o estoque e finaliza o carrinho utilizado na compra.
+**Agente de execução:** `self-hosted (pool Default)`.
 
 ---
 
-## 🔗 HATEOAS
+## 🔐 Variáveis protegidas
 
-Os endpoints de consulta da API utilizam **HATEOAS (Hypermedia as the Engine of Application State)**.
+Valores sensíveis ficam como **variáveis secretas** da pipeline (ícone de cadeado) e nunca são versionados. A tabela mostra apenas os nomes.
 
-Os recursos consultados podem ser retornados juntamente com links que indicam operações e navegações relacionadas ao recurso.
-
-Exemplo:
-
-```json
-{
-  "data": {
-    "id": 1,
-    "name": "Produto"
-  },
-  "links": [
-    {
-      "rel": "self",
-      "href": "/api/Product/1",
-      "method": "GET"
-    },
-    {
-      "rel": "all-products",
-      "href": "/api/Product",
-      "method": "GET"
-    }
-  ]
-}
-```
-
-A implementação de HATEOAS está presente nos endpoints de consulta de:
-
-- produtos;
-- categorias;
-- carrinhos;
-- pedidos.
-
-As estruturas compartilhadas utilizadas para representar os recursos e links estão localizadas em:
-
-```txt
-Vitalia.API/Hateoas/
-├── HateoasLink.cs
-└── HateoasResource.cs
-```
+| Variável | Secreta | Uso |
+|----------|---------|-----|
+| `OracleConnection` | ✅ Sim | Connection string do Oracle (`ConnectionStrings__OracleConnection`) |
+| `JWT_SECRET` | ✅ Sim | Segredo compartilhado para validar o JWT |
+| `ASPNETCORE_ENVIRONMENT` | Não | Ambiente da aplicação (`Production`) |
+| `NOME_WEBAPP` | Não | Nome do Web App de destino |
 
 ---
 
-## 📄 HTTP Status Codes
+## ✅ Como validar a aplicação
 
-| Código | Descrição |
-| --- | --- |
-| 200 | OK |
-| 201 | Created |
-| 204 | No Content |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 403 | Forbidden |
-| 404 | Not Found |
-| 409 | Conflict |
-| 500 | Internal Server Error |
+1. Abra o Swagger: https://vitalia-sprint4-grupobsl.azurewebsites.net/swagger/index.html
+2. Confirme a saúde da API e do banco em `/health/ready`.
+3. Teste o CRUD de **Category** em `/api/Category` (`POST`, `GET`, `GET /{id}`, `PUT /{id}` e `DELETE /{id}`). Criar, alterar e excluir exigem um JWT com a role `ADMIN`: no Swagger, clique em **Authorize** e informe `Bearer <token>`.
+4. Confira cada operação direto no banco:
 
-Erros tratados pelo `GlobalExceptionHandler` seguem o padrão **Problem Details (RFC 7807)**.
-
-Exemplo de estrutura:
-
-```json
-{
-  "type": "https://httpstatuses.com/404",
-  "title": "Recurso não encontrado.",
-  "status": 404,
-  "detail": "Mensagem de erro.",
-  "instance": "/api/recurso/1"
-}
+```sql
+SELECT CATEGORY_ID, NAME, DESCRIPTION
+FROM TB_VITALIA_PRODUCT_CATEGORY
+ORDER BY CATEGORY_ID;
 ```
 
-Em ambiente de desenvolvimento, erros tratados também podem incluir o `traceId` para facilitar a correlação com logs e traces.
+**Prova do CI/CD:** a rota `GET /wellcome` foi adicionada em `Program.cs` para demonstrar que uma alteração de código na `master` percorre todo o fluxo (commit → CI → artefato → CD → aplicação atualizada).
 
 ---
 
-## 📘 Swagger / OpenAPI
+## 🧪 Testes automatizados
 
-A API possui documentação interativa utilizando Swagger / OpenAPI.
+O CI executa os testes a cada alteração na `master`. Para rodar localmente:
 
-Com o perfil HTTP padrão do projeto:
-
-```txt
-http://localhost:5230/swagger
-```
-
-A documentação permite:
-
-- visualizar os endpoints;
-- consultar parâmetros e modelos;
-- testar requisições;
-- visualizar paginação, ordenação e filtros;
-- visualizar os modelos HATEOAS;
-- informar JWT Bearer pelo botão **Authorize**;
-- visualizar os principais códigos de resposta HTTP.
-
----
-
-## 🩺 Health Checks
-
-A aplicação possui endpoints de monitoramento de saúde.
-
-| Endpoint | Função |
-| --- | --- |
-| `/health` | Retorna a saúde geral da aplicação e suas dependências registradas |
-| `/health/live` | Verifica se a API está em execução |
-| `/health/ready` | Verifica se a aplicação está pronta para receber tráfego |
-
-O endpoint de readiness valida também a conectividade com o **Oracle Database**.
-
-Exemplo:
-
-```bash
-curl http://localhost:5230/health
-```
-
-Resposta esperada quando os serviços estão saudáveis:
-
-```json
-{
-  "status": "Healthy",
-  "checks": [
-    {
-      "name": "Oracle",
-      "status": "Healthy"
-    }
-  ]
-}
-```
-
----
-
-## 📝 Logs com Serilog
-
-A aplicação utiliza **Serilog** para logging estruturado.
-
-As requisições HTTP registram informações como:
-
-- método HTTP;
-- rota;
-- status code;
-- tempo de resposta;
-- `TraceId`;
-- `RequestId`.
-
-Exemplo:
-
-```txt
-HTTP GET /health responded 200 in 10.1585 ms |
-TraceId: 123385a09cdd9f5389dcd9145f88fada |
-RequestId: 0HNOD3VN7J5U7
-```
-
-O projeto utiliza níveis de logging como:
-
-```txt
-Information
-Warning
-Error
-```
-
-O `TraceId` permite correlacionar a requisição registrada pelo Serilog com o trace criado pelo OpenTelemetry.
-
-### Persistência dos logs
-
-Além da saída no console, o Serilog grava logs em arquivos utilizando rotação diária.
-
-Os arquivos são gerados em:
-
-```txt
-Vitalia.API/logs/vitalia-AAAA-MM-DD.log
-```
-
-A configuração utiliza:
-
-- rotação diária;
-- retenção dos últimos 7 arquivos;
-- logging estruturado;
-- enriquecimento com informações da aplicação;
-- saída simultânea no console e em arquivo.
-
-A pasta:
-
-```txt
-Vitalia.API/logs/
-```
-
-não é versionada pelo Git.
-
----
-
-## 📊 OpenTelemetry e Prometheus
-
-A API utiliza **OpenTelemetry** para observabilidade.
-
-### Tracing
-
-São instrumentados:
-
-- ASP.NET Core;
-- requisições HTTP realizadas por `HttpClient`;
-- Entity Framework Core.
-
-Os traces incluem informações como:
-
-```txt
-TraceId
-SpanId
-Duration
-HTTP Method
-Route
-Status Code
-Service Name
-```
-
-O serviço é identificado como:
-
-```txt
-Vitalia.API
-```
-
-### Métricas
-
-As métricas são disponibilizadas para Prometheus através de:
-
-```txt
-/metrics
-```
-
-Exemplo:
-
-```bash
-curl http://localhost:5230/metrics
-```
-
-Entre as métricas coletadas estão dados de:
-
-- requisições HTTP;
-- duração das requisições;
-- runtime do .NET;
-- conexões e servidor ASP.NET Core;
-- chamadas HTTP externas.
-
-Essas métricas podem ser utilizadas para acompanhar tempo de resposta, volume de requisições e taxa de erros.
-
----
-
-## 🗄️ Banco de Dados e Migrations
-
-A aplicação utiliza **Oracle Database** com **Entity Framework Core** para persistência relacional.
-
-O `VitaliaDbContext` gerencia as tabelas comerciais relacionadas a:
-
-```txt
-Category
-Product
-Cart
-CartItem
-Order
-OrderItem
-```
-
-O projeto possui uma migration inicial versionada:
-
-```txt
-20260907194842_InitialCommercialSchema
-```
-
-Arquivos principais:
-
-```txt
-Vitalia.Infrastructure/Migrations/
-├── 20260907194842_InitialCommercialSchema.cs
-├── 20260907194842_InitialCommercialSchema.Designer.cs
-└── VitaliaDbContextModelSnapshot.cs
-```
-
-Para listar migrations:
-
-```bash
-dotnet ef migrations list \
-  --project Vitalia.Infrastructure/Vitalia.Infrastructure.csproj \
-  --startup-project Vitalia.API/Vitalia.API.csproj \
-  --context VitaliaDbContext
-```
-
-Em um schema Oracle novo, a migration pode ser aplicada com:
-
-```bash
-dotnet ef database update \
-  --project Vitalia.Infrastructure/Vitalia.Infrastructure.csproj \
-  --startup-project Vitalia.API/Vitalia.API.csproj \
-  --context VitaliaDbContext
-```
-
-> **Atenção:** caso o schema Oracle já possua as tabelas criadas, verifique o estado do banco antes de executar `database update` para evitar conflito com objetos já existentes.
-
----
-
-## ⚙️ Como Executar
-
-### 1. Clonar o repositório
-
-```bash
-git clone https://github.com/Grupo-BSL-Challenge-FIAP/vitalia-dotnet-sprint4.git
-```
-
-### 2. Entrar na pasta do projeto
-
-```bash
-cd vitalia-dotnet-sprint4
-```
-
-### 3. Restaurar as dependências
-
-```bash
-dotnet restore
-```
-
-### 4. Configurar os segredos
-
-Inicialize o User Secrets, caso ainda não esteja configurado:
-
-```bash
-dotnet user-secrets init \
-  --project Vitalia.API/Vitalia.API.csproj
-```
-
-Configure a conexão Oracle:
-
-```bash
-dotnet user-secrets set \
-  "ConnectionStrings:OracleConnection" \
-  "User Id=USUARIO;Password=SENHA;Data Source=oracle.fiap.com.br:1521/ORCL;" \
-  --project Vitalia.API/Vitalia.API.csproj
-```
-
-Configure o segredo utilizado na validação do JWT:
-
-```bash
-dotnet user-secrets set \
-  "JWT_SECRET" \
-  "JWT_CREDENCIAL" \
-  --project Vitalia.API/Vitalia.API.csproj
-```
-
-> O valor do segredo JWT não deve ser versionado no Git. A API .NET precisa utilizar o segredo compatível com o token emitido pelo backend Java do Vitalia.
-
-### 5. Compilar
-
-```bash
-dotnet build
-```
-
-### 6. Executar a API
-
-```bash
-dotnet run \
-  --project Vitalia.API/ \
-  --launch-profile http
-```
-
-A aplicação será disponibilizada em:
-
-```txt
-http://localhost:5230
-```
-
-Swagger:
-
-```txt
-http://localhost:5230/swagger
-```
-
----
-
-## 🧪 Testes
-
-Os testes estão separados em três projetos:
-
-```txt
-tests/
-├── Vitalia.Domain.Tests
-├── Vitalia.Application.Tests
-└── Vitalia.API.IntegrationTests
-```
-
-### Testes unitários
-
-Os testes de domínio e aplicação utilizam:
-
-- xUnit;
-- Moq;
-- padrão Arrange / Act / Assert;
-- nomes de testes descritivos seguindo o cenário e o resultado esperado.
-
-Entre os comportamentos de domínio testados estão:
-
-- criação e atualização de produtos;
-- redução de estoque;
-- criação e atualização de categorias;
-- criação e gerenciamento do carrinho;
-- inclusão e remoção de itens do carrinho;
-- checkout e abandono de carrinhos;
-- validações de quantidade;
-- criação de itens de pedido;
-- cálculo de subtotal;
-- transições de estado dos pedidos;
-- validações de transições inválidas.
-
-### Testes de integração
-
-Os testes de integração utilizam:
-
-- `WebApplicationFactory`;
-- `IClassFixture`;
-- banco em memória para isolamento;
-- autenticação JWT de teste;
-- validação de cenários de sucesso;
-- validação de autenticação e autorização;
-- validação de erros HTTP;
-- fluxo comercial de carrinho, checkout e pedido;
-- Health Checks;
-- Swagger / OpenAPI.
-
-Para executar toda a suíte:
-
-```bash
+```powershell
 dotnet test
 ```
 
-Resultado atual da suíte:
+| Projeto | Tipo |
+|---------|------|
+| `tests/Vitalia.Domain.Tests` | Testes unitários do domínio |
+| `tests/Vitalia.Application.Tests` | Testes unitários da camada de aplicação |
+| `tests/Vitalia.API.IntegrationTests` | Testes de integração da API |
 
-```txt
-Total: 91
-Sucesso: 91
-Falhas: 0
-Ignorados: 0
-```
-
----
-
-## 📈 Cobertura de Testes
-
-Para gerar os relatórios de cobertura:
-
-```bash
-dotnet test --collect:"XPlat Code Coverage"
-```
-
-Os relatórios no formato Cobertura são gerados dentro das pastas `TestResults` de cada projeto de testes.
-
-Resultados atuais:
-
-| Projeto | Linhas | Branches |
-| --- | ---: | ---: |
-| Vitalia.Domain.Tests | **92,51%** | **86,36%** |
-| Vitalia.Application.Tests | **72,92%** | **74,52%** |
-| Vitalia.API.IntegrationTests | **39,80%** | **16,66%** |
-
-A cobertura de domínio foi ampliada através de testes específicos para:
-
-- `Product`;
-- `Category`;
-- `Cart`;
-- `CartItem`;
-- `Order`;
-- `OrderItem`.
-
-A camada `Application` possui cobertura dos serviços e regras de aplicação, enquanto os testes de integração validam o comportamento da API HTTP e dos principais fluxos comerciais.
+Os resultados aparecem na aba **Tests** da execução da pipeline.
 
 ---
 
-## 📌 Funcionalidades Implementadas
+## 📁 Estrutura do repositório
 
-- CRUD de categorias;
-- CRUD de produtos;
-- rotas parametrizadas;
-- paginação de produtos;
-- ordenação de produtos;
-- filtros por categoria e status;
-- HATEOAS nos endpoints de consulta;
-- gerenciamento de carrinho;
-- adição, atualização e remoção de itens;
-- checkout;
-- criação de pedidos;
-- controle de estoque durante o checkout;
-- ciclo de vida dos pedidos;
-- autenticação JWT;
-- autorização por roles;
-- Oracle Database;
-- Entity Framework Core;
-- migrations;
-- Repository Pattern;
-- Service Layer;
-- injeção de dependência;
-- tratamento global de exceções;
-- Problem Details;
-- Swagger / OpenAPI;
-- Health Checks;
-- Serilog;
-- logs persistidos em arquivo;
-- rotação diária dos arquivos de log;
-- retenção dos últimos 7 arquivos;
-- correlação por `TraceId` e `RequestId`;
-- OpenTelemetry;
-- métricas Prometheus;
-- testes unitários;
-- testes de integração;
-- fixtures com xUnit;
-- padrão Arrange / Act / Assert;
-- cobertura com Coverlet.
+```text
+Directory structure:
+└── grupo-bsl-challenge-fiap-vitalia-devops-sprint4/
+    ├── README.md
+    ├── Vitalia.sln
+    ├── docs/
+    │   ├── arquitetura-vitalia.drawio
+    │   └── relacionamentos-vitalia.drawio
+    ├── tests/
+    │   ├── Vitalia.API.IntegrationTests/
+    │   │   ├── ApiIntegrationTests.cs
+    │   │   ├── Vitalia.API.IntegrationTests.csproj
+    │   │   └── VitaliaWebApplicationFactory.cs
+    │   ├── Vitalia.Application.Tests/
+    │   │   ├── CartServiceTests.cs
+    │   │   ├── OrderServiceTests.cs
+    │   │   ├── ProductServiceTests.cs
+    │   │   └── Vitalia.Application.Tests.csproj
+    │   └── Vitalia.Domain.Tests/
+    │       ├── CartItemTests.cs
+    │       ├── CartTests.cs
+    │       ├── CategoryTests.cs
+    │       ├── OrderItemTests.cs
+    │       ├── OrderTests.cs
+    │       ├── ProductTests.cs
+    │       └── Vitalia.Domain.Tests.csproj
+    ├── Vitalia.API/
+    │   ├── appsettings.Development.json
+    │   ├── appsettings.json
+    │   ├── Program.cs
+    │   ├── Vitalia.API.csproj
+    │   ├── Configurations/
+    │   │   └── JwtConfiguration.cs
+    │   ├── Controllers/
+    │   │   ├── CartController.cs
+    │   │   ├── CategoryController.cs
+    │   │   ├── OrderController.cs
+    │   │   └── ProductController.cs
+    │   ├── Exceptions/
+    │   │   └── GlobalExceptionHandler.cs
+    │   ├── Extensions/
+    │   │   └── VitaliaServiceCollectionExtensions.cs
+    │   ├── Hateoas/
+    │   │   ├── HateoasLink.cs
+    │   │   └── HateoasResource.cs
+    │   ├── Health/
+    │   │   └── HealthCheckResponseWriter.cs
+    │   ├── Properties/
+    │   │   └── launchSettings.json
+    │   └── Services/
+    │       └── CurrentUser.cs
+    ├── Vitalia.Application/
+    │   ├── Vitalia.Application.csproj
+    │   ├── DTOs/
+    │   │   ├── Cart/
+    │   │   │   ├── CartItemRequest.cs
+    │   │   │   ├── CartItemResponse.cs
+    │   │   │   ├── CartRequest.cs
+    │   │   │   └── CartResponse.cs
+    │   │   ├── Category/
+    │   │   │   ├── CategoryRequest.cs
+    │   │   │   └── CategoryResponse.cs
+    │   │   ├── Order/
+    │   │   │   ├── OrderItemResponse.cs
+    │   │   │   └── OrderResponse.cs
+    │   │   └── Product/
+    │   │       ├── ProductPagedResponse.cs
+    │   │       ├── ProductRequest.cs
+    │   │       └── ProductResponse.cs
+    │   ├── Interfaces/
+    │   │   ├── Repositories/
+    │   │   │   ├── ICartItemRepository.cs
+    │   │   │   ├── ICartRepository.cs
+    │   │   │   ├── ICategoryRepository.cs
+    │   │   │   ├── IOrderItemRepository.cs
+    │   │   │   ├── IOrderRepository.cs
+    │   │   │   ├── IProductRepository.cs
+    │   │   │   └── IUnitOfWork.cs
+    │   │   └── Services/
+    │   │       ├── ICartService.cs
+    │   │       ├── ICategoryService.cs
+    │   │       ├── ICurrentUser.cs
+    │   │       ├── IOrderService.cs
+    │   │       └── IProductService.cs
+    │   └── Services/
+    │       ├── CartService.cs
+    │       ├── CategoryService.cs
+    │       ├── OrderService.cs
+    │       └── ProductService.cs
+    ├── Vitalia.Domain/
+    │   ├── Vitalia.Domain.csproj
+    │   ├── Common/
+    │   │   └── Entity.cs
+    │   ├── Entities/
+    │   │   ├── Cart.cs
+    │   │   ├── CartItem.cs
+    │   │   ├── Category.cs
+    │   │   ├── Order.cs
+    │   │   ├── OrderItem.cs
+    │   │   └── Product.cs
+    │   └── Enums/
+    │       ├── CartStatus.cs
+    │       ├── OrderStatus.cs
+    │       └── ProductStatus.cs
+    └── Vitalia.Infrastructure/
+        ├── Vitalia.Infrastructure.csproj
+        ├── Configurations/
+        │   ├── CartConfiguration.cs
+        │   ├── CartItemConfiguration.cs
+        │   ├── CategoryConfiguration.cs
+        │   ├── OrderConfiguration.cs
+        │   ├── OrderItemConfiguration.cs
+        │   └── ProductConfiguration.cs
+        ├── Data/
+        │   ├── UnitOfWork.cs
+        │   └── VitaliaDbContext.cs
+        ├── Migrations/
+        │   ├── 20260907194842_InitialCommercialSchema.cs
+        │   ├── 20260907194842_InitialCommercialSchema.Designer.cs
+        │   └── VitaliaDbContextModelSnapshot.cs
+        └── Repositories/
+            ├── CartItemRepository.cs
+            ├── CartRepository.cs
+            ├── CategoryRepository.cs
+            ├── OrderItemRepository.cs
+            ├── OrderRepository.cs
+            └── ProductRepository.cs
 
----
-
-## 🌐 Ambiente Publicado
-
-A API do módulo comercial do Vitalia está publicada no **Render** e pode ser acessada pelos links abaixo.
-
-| Recurso | URL |
-|---|---|
-| 🚀 **API .NET** | https://vitalia-dotnet.onrender.com |
-| 📘 **Swagger / OpenAPI** | https://vitalia-dotnet.onrender.com/swagger |
-| 🩺 **Health Check** | https://vitalia-dotnet.onrender.com/health |
-| 💚 **Liveness** | https://vitalia-dotnet.onrender.com/health/live |
-| ✅ **Readiness** | https://vitalia-dotnet.onrender.com/health/ready |
-| 📊 **Métricas Prometheus** | https://vitalia-dotnet.onrender.com/metrics |
-
-O ambiente publicado utiliza:
-
-- **Oracle Database** para persistência relacional.
-
-As configurações sensíveis são fornecidas ao Render através de variáveis de ambiente e não são versionadas no repositório.
-
-Entre as principais configurações estão:
-
-```txt
-ConnectionStrings__OracleConnection
-JWT_SECRET
 ```
