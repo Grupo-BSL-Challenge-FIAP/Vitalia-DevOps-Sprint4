@@ -54,7 +54,6 @@ if ([string]::IsNullOrWhiteSpace($existingPlan)) {
         --name $Plan `
         --resource-group $ResourceGroup `
         --location $Location `
-        --is-linux false
         --sku F1 `
         --output none
 
