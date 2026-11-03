@@ -1,20 +1,25 @@
+<p align="center">
+  <img width="270" height="270" alt="image" src="https://res.cloudinary.com/dt26mfzpw/image/upload/v1788957793/vitalia-logo-full_khdewh.png" />
+</p>
+
 # 🐾 Vitalia API — Módulo Comercial
+
 
 **Sprint 4 · DevOps Tools & Cloud Computing · CI/CD com Azure DevOps**
 
 API REST em **ASP.NET Core / .NET 10** do módulo comercial da plataforma **Vitalia** (categorias, produtos, carrinho, checkout e pedidos), publicada no **Azure Web App** por uma pipeline de **CI/CD no Azure DevOps** e persistindo dados em um **Oracle Database em nuvem (Oracle)**.
 
-> A documentação técnica completa da API (entidades, endpoints, autenticação, HATEOAS, status codes) está em [`docs/README.md`](docs/README.md).
+> A documentação técnica completa da API (entidades, endpoints, autenticação, HATEOAS, status codes) está em [`docs/README-API.md`](docs/README-API.md).
 
 ---
 
 ## 📑 Índice
 
 - [👥 Integrantes](#-integrantes)
-- [🔗 Links da entrega](#-links-da-entrega)
+- [🔗 Links](#-links)
 - [📚 Descrição da solução](#-descrição-da-solução)
 - [🚀 Stack de tecnologias](#-stack-de-tecnologias)
-- [🧭 Diagrama de arquitetura e fluxo CI/CD](#-diagrama-de-arquitetura-e-fluxo-cicd)
+- [🧭 Diagrama de arquitetura CI/CD](#-diagrama-de-arquitetura-cicd)
 - [🗄️ Banco de dados em nuvem](#️-banco-de-dados-em-nuvem)
 - [☁️ Infraestrutura no Azure](#️-infraestrutura-no-azure)
 - [🧰 Projeto no Azure DevOps](#-projeto-no-azure-devops)
@@ -22,7 +27,6 @@ API REST em **ASP.NET Core / .NET 10** do módulo comercial da plataforma **Vita
 - [🔐 Variáveis protegidas](#-variáveis-protegidas)
 - [✅ Como validar a aplicação](#-como-validar-a-aplicação)
 - [🧪 Testes automatizados](#-testes-automatizados)
-- [📁 Estrutura do repositório](#-estrutura-do-repositório)
 
 ---
 
@@ -61,14 +65,14 @@ API REST em **ASP.NET Core / .NET 10** do módulo comercial da plataforma **Vita
 
 ---
 
-## 🔗 Links da entrega
+## 🔗 Links
 
 | Item | Link |
 |------|------|
-| Repositório no GitHub | `<URL GitHub>` |
+| Repositório no GitHub | https://github.com/Grupo-BSL-Challenge-FIAP/Vitalia-DevOps-Sprint4 |
 | Projeto no Azure DevOps | https://dev.azure.com/Grupo-BSL-Vitalia/Sprint%204%20-%20Azure%20DevOps |
 | Vídeo no YouTube | `<URL vídeo>` |
-| Aplicação em nuvem (Azure Web App) | https://vitalia-sprint4-grupobsl.azurewebsites.net |
+| Aplicação em nuvem (Azure Web App) | https://vitalia-sprint4-grupobsl.azurewebsites.net/ |
 | Swagger | https://vitalia-sprint4-grupobsl.azurewebsites.net/swagger/index.html |
 | Health check | https://vitalia-sprint4-grupobsl.azurewebsites.net/health/ready |
 
@@ -104,37 +108,35 @@ O objetivo da Sprint 4 é automatizar o ciclo de entrega: a cada alteração de 
 
 ---
 
-## 🧭 Diagrama de arquitetura e fluxo CI/CD
+## 🧭 Diagrama de arquitetura CI/CD
 
-<!-- Adicionar png draw.io -->
+![Diagrama de arquitetura e fluxo CI/CD](docs/diagrama-arquitetura-vitalia.png)
 
-![Diagrama de arquitetura e fluxo CI/CD](docs/arquitetura-devops-sprint4.png)
+**Fluxo detalhado:**
 
-**Fluxo numerado (mesma numeração do diagrama):**
+| Etapa | Onde acontece |
+|-------|---------------|
+| O desenvolvedor faz commit e push na branch `master` | IDE / Git |
+| O push dispara o gatilho da pipeline | Azure DevOps Pipelines |
+| CI: restauração de dependências e build da API | Agente de pipeline |
+| CI: execução dos testes automatizados (xUnit) | Agente de pipeline |
+| CI: publicação da aplicação e compactação em `.zip` | Agente de pipeline |
+| CI: publicação do artefato `app` no Azure DevOps | Azure DevOps Artifacts |
+| CD: inicia somente após o novo artefato ser gerado | Azure DevOps Pipelines |
+| CD: autenticação no Azure pela service connection | Azure DevOps + Microsoft Entra ID |
+| CD: gravação das App Settings (variáveis protegidas) | Azure App Service |
+| CD: deploy do pacote no Web App (Zip Deploy) | Azure App Service |
+| O usuário final acessa a API por HTTPS | Azure App Service |
+| A API lê e grava dados no Oracle | Oracle FIAP (nuvem) |
+| O JWT é emitido pelo backend Java e validado pela API | Backend Java / API .NET |
 
-| # | Etapa | Onde acontece |
-|---|-------|---------------|
-| 1 | O desenvolvedor faz commit e push na branch `master` | IDE / Git |
-| 2 | O push dispara o gatilho da pipeline | Azure DevOps Pipelines |
-| 3 | CI: restauração de dependências e build da API | Agente de pipeline |
-| 4 | CI: execução dos testes automatizados (xUnit) | Agente de pipeline |
-| 5 | CI: publicação da aplicação e compactação em `.zip` | Agente de pipeline |
-| 6 | CI: publicação do artefato `app` no Azure DevOps | Azure DevOps Artifacts |
-| 7 | CD: inicia somente após o novo artefato ser gerado | Azure DevOps Pipelines |
-| 8 | CD: autenticação no Azure pela service connection | Azure DevOps + Microsoft Entra ID |
-| 9 | CD: gravação das App Settings (variáveis protegidas) | Azure App Service |
-| 10 | CD: deploy do pacote no Web App (Zip Deploy) | Azure App Service |
-| 11 | O usuário final acessa a API por HTTPS | Azure App Service |
-| 12 | A API lê e grava dados no Oracle | Oracle FIAP (nuvem) |
-| 13 | O JWT é emitido pelo backend Java e validado pela API | Backend Java / API .NET |
-
-**Personas:** desenvolvedor (faz o commit e acompanha a pipeline) e usuário final (consome a API pelo app e pelo Swagger).
+**Personas:** desenvolvedor (faz o commit e acompanha a pipeline) e usuário final (consome a API pelo app).
 
 ---
 
 ## 🗄️ Banco de dados em nuvem
 
-- **Serviço:** Oracle Database da FIAP (`oracle.fiap.com.br:1521`, service name `ORCL`).
+- **Serviço:** Oracle Database da FIAP.
 - **Acesso:** a connection string fica em variável protegida da pipeline e chega ao Web App como App Setting. Ela nunca é versionada.
 - **Tabelas** (criadas pelas migrations do Entity Framework Core):
   `TB_VITALIA_PRODUCT_CATEGORY`, `TB_VITALIA_PRODUCT`, `TB_VITALIA_CART`, `TB_VITALIA_CART_ITEM`, `TB_VITALIA_ORDERS` e `TB_VITALIA_ORDER_ITEM`.
@@ -148,8 +150,6 @@ dotnet ef migrations script `
   --output db/script.sql
 ```
 
-- **Conectividade:** a conexão Azure → Oracle FIAP foi validada pelo console Kudu do Web App (`tcpping oracle.fiap.com.br:1521`).
-
 ---
 
 ## ☁️ Infraestrutura no Azure
@@ -162,7 +162,7 @@ dotnet ef migrations script `
 | Runtime | .NET 10 |
 | Região | `canadacentral` |
 
-Os recursos foram criados a partir do script documentado em [`docs/cria-infra.sh`](db/cria-infra.sh).
+Os recursos foram criados a partir do script documentado em [`infra/criar-infra.ps1`](infra/criar-infra.ps1).
 
 ---
 
@@ -182,11 +182,11 @@ Os recursos foram criados a partir do script documentado em [`docs/cria-infra.sh
 
 ## ⚙️ Pipeline de CI/CD
 
-A pipeline é definida em YAML, no arquivo [`azure-pipelines.yml`](azure-pipelines.yml) na raiz do repositório, e está conectada ao repositório da aplicação.
+A pipeline é definida em YAML, no arquivo [`azure-pipelines.yml`](azure-pipelines.yml) na raiz do repositório.
 
 **Gatilho:** a cada alteração na branch `master`.
 
-### Estágio 1 - CI: Build e testes
+### Estágio CI: Build e testes
 
 | Ordem | Task | O que faz |
 |-------|------|-----------|
@@ -197,7 +197,7 @@ A pipeline é definida em YAML, no arquivo [`azure-pipelines.yml`](azure-pipelin
 | 5 | `ArchiveFiles@2` | Compacta a aplicação em `app.zip` |
 | 6 | `PublishPipelineArtifact@1` | Publica o artefato `app` no Azure DevOps |
 
-### Estágio 2 - CD: Deploy no Azure Web App
+### Estágio CD: Deploy no Azure Web App
 
 O estágio depende do CI (`dependsOn`) e só executa depois que o artefato foi gerado.
 
@@ -208,29 +208,30 @@ O estágio depende do CI (`dependsOn`) e só executa depois que o artefato foi g
 | 3 | `AzureWebApp@1` | Faz o deploy do `app.zip` no Web App (Zip Deploy) |
 
 **Autenticação no Azure:** service connection `azure-vitalia-sprint4` (Azure Resource Manager, workload identity federation).
-
 **Agente de execução:** `self-hosted (pool Default)`.
 
 ---
 
 ## 🔐 Variáveis protegidas
 
-Valores sensíveis ficam como **variáveis secretas** da pipeline (ícone de cadeado) e nunca são versionados. A tabela mostra apenas os nomes.
+Valores sensíveis ficam como **variáveis secretas** da pipeline e nunca são versionados.
 
 | Variável | Secreta | Uso |
 |----------|---------|-----|
-| `OracleConnection` | ✅ Sim | Connection string do Oracle (`ConnectionStrings__OracleConnection`) |
-| `JWT_SECRET` | ✅ Sim | Segredo compartilhado para validar o JWT |
-| `ASPNETCORE_ENVIRONMENT` | Não | Ambiente da aplicação (`Production`) |
-| `NOME_WEBAPP` | Não | Nome do Web App de destino |
+| `OracleConnection` | Sim | Connection string do Oracle (`ConnectionStrings__OracleConnection`) |
+| `JWT_SECRET` | Sim | Segredo compartilhado para validar o JWT |
+| `ASPNETCORE_ENVIRONMENT` | Não | `Production` |
+| `NOME_WEBAPP` | Não | `vitalia-sprint4-grupobsl` |
 
 ---
 
 ## ✅ Como validar a aplicação
 
+⚠️ Criar, alterar e excluir exigem um JWT com a role `ADMIN`: no Swagger, clique em **Authorize** e informe `Bearer <token>`.
+
 1. Abra o Swagger: https://vitalia-sprint4-grupobsl.azurewebsites.net/swagger/index.html
 2. Confirme a saúde da API e do banco em `/health/ready`.
-3. Teste o CRUD de **Category** em `/api/Category` (`POST`, `GET`, `GET /{id}`, `PUT /{id}` e `DELETE /{id}`). Criar, alterar e excluir exigem um JWT com a role `ADMIN`: no Swagger, clique em **Authorize** e informe `Bearer <token>`.
+3. Teste o CRUD de **Category** em `/api/Category` (`POST`, `GET`, `GET /{id}`, `PUT /{id}` e `DELETE /{id}`). 
 4. Confira cada operação direto no banco:
 
 ```sql
@@ -238,8 +239,6 @@ SELECT CATEGORY_ID, NAME, DESCRIPTION
 FROM TB_VITALIA_PRODUCT_CATEGORY
 ORDER BY CATEGORY_ID;
 ```
-
-**Prova do CI/CD:** a rota `GET /wellcome` foi adicionada em `Program.cs` para demonstrar que uma alteração de código na `master` percorre todo o fluxo (commit → CI → artefato → CD → aplicação atualizada).
 
 ---
 
@@ -260,135 +259,3 @@ dotnet test
 Os resultados aparecem na aba **Tests** da execução da pipeline.
 
 ---
-
-## 📁 Estrutura do repositório
-
-```text
-Directory structure:
-└── grupo-bsl-challenge-fiap-vitalia-devops-sprint4/
-    ├── README.md
-    ├── Vitalia.sln
-    ├── docs/
-    │   ├── arquitetura-vitalia.drawio
-    │   └── relacionamentos-vitalia.drawio
-    ├── tests/
-    │   ├── Vitalia.API.IntegrationTests/
-    │   │   ├── ApiIntegrationTests.cs
-    │   │   ├── Vitalia.API.IntegrationTests.csproj
-    │   │   └── VitaliaWebApplicationFactory.cs
-    │   ├── Vitalia.Application.Tests/
-    │   │   ├── CartServiceTests.cs
-    │   │   ├── OrderServiceTests.cs
-    │   │   ├── ProductServiceTests.cs
-    │   │   └── Vitalia.Application.Tests.csproj
-    │   └── Vitalia.Domain.Tests/
-    │       ├── CartItemTests.cs
-    │       ├── CartTests.cs
-    │       ├── CategoryTests.cs
-    │       ├── OrderItemTests.cs
-    │       ├── OrderTests.cs
-    │       ├── ProductTests.cs
-    │       └── Vitalia.Domain.Tests.csproj
-    ├── Vitalia.API/
-    │   ├── appsettings.Development.json
-    │   ├── appsettings.json
-    │   ├── Program.cs
-    │   ├── Vitalia.API.csproj
-    │   ├── Configurations/
-    │   │   └── JwtConfiguration.cs
-    │   ├── Controllers/
-    │   │   ├── CartController.cs
-    │   │   ├── CategoryController.cs
-    │   │   ├── OrderController.cs
-    │   │   └── ProductController.cs
-    │   ├── Exceptions/
-    │   │   └── GlobalExceptionHandler.cs
-    │   ├── Extensions/
-    │   │   └── VitaliaServiceCollectionExtensions.cs
-    │   ├── Hateoas/
-    │   │   ├── HateoasLink.cs
-    │   │   └── HateoasResource.cs
-    │   ├── Health/
-    │   │   └── HealthCheckResponseWriter.cs
-    │   ├── Properties/
-    │   │   └── launchSettings.json
-    │   └── Services/
-    │       └── CurrentUser.cs
-    ├── Vitalia.Application/
-    │   ├── Vitalia.Application.csproj
-    │   ├── DTOs/
-    │   │   ├── Cart/
-    │   │   │   ├── CartItemRequest.cs
-    │   │   │   ├── CartItemResponse.cs
-    │   │   │   ├── CartRequest.cs
-    │   │   │   └── CartResponse.cs
-    │   │   ├── Category/
-    │   │   │   ├── CategoryRequest.cs
-    │   │   │   └── CategoryResponse.cs
-    │   │   ├── Order/
-    │   │   │   ├── OrderItemResponse.cs
-    │   │   │   └── OrderResponse.cs
-    │   │   └── Product/
-    │   │       ├── ProductPagedResponse.cs
-    │   │       ├── ProductRequest.cs
-    │   │       └── ProductResponse.cs
-    │   ├── Interfaces/
-    │   │   ├── Repositories/
-    │   │   │   ├── ICartItemRepository.cs
-    │   │   │   ├── ICartRepository.cs
-    │   │   │   ├── ICategoryRepository.cs
-    │   │   │   ├── IOrderItemRepository.cs
-    │   │   │   ├── IOrderRepository.cs
-    │   │   │   ├── IProductRepository.cs
-    │   │   │   └── IUnitOfWork.cs
-    │   │   └── Services/
-    │   │       ├── ICartService.cs
-    │   │       ├── ICategoryService.cs
-    │   │       ├── ICurrentUser.cs
-    │   │       ├── IOrderService.cs
-    │   │       └── IProductService.cs
-    │   └── Services/
-    │       ├── CartService.cs
-    │       ├── CategoryService.cs
-    │       ├── OrderService.cs
-    │       └── ProductService.cs
-    ├── Vitalia.Domain/
-    │   ├── Vitalia.Domain.csproj
-    │   ├── Common/
-    │   │   └── Entity.cs
-    │   ├── Entities/
-    │   │   ├── Cart.cs
-    │   │   ├── CartItem.cs
-    │   │   ├── Category.cs
-    │   │   ├── Order.cs
-    │   │   ├── OrderItem.cs
-    │   │   └── Product.cs
-    │   └── Enums/
-    │       ├── CartStatus.cs
-    │       ├── OrderStatus.cs
-    │       └── ProductStatus.cs
-    └── Vitalia.Infrastructure/
-        ├── Vitalia.Infrastructure.csproj
-        ├── Configurations/
-        │   ├── CartConfiguration.cs
-        │   ├── CartItemConfiguration.cs
-        │   ├── CategoryConfiguration.cs
-        │   ├── OrderConfiguration.cs
-        │   ├── OrderItemConfiguration.cs
-        │   └── ProductConfiguration.cs
-        ├── Data/
-        │   ├── UnitOfWork.cs
-        │   └── VitaliaDbContext.cs
-        ├── Migrations/
-        │   ├── 20260907194842_InitialCommercialSchema.cs
-        │   ├── 20260907194842_InitialCommercialSchema.Designer.cs
-        │   └── VitaliaDbContextModelSnapshot.cs
-        └── Repositories/
-            ├── CartItemRepository.cs
-            ├── CartRepository.cs
-            ├── CategoryRepository.cs
-            ├── OrderItemRepository.cs
-            ├── OrderRepository.cs
-            └── ProductRepository.cs
-
-```
