@@ -71,7 +71,7 @@ API REST em **ASP.NET Core / .NET 10** do módulo comercial da plataforma **Vita
 |------|------|
 | Repositório no GitHub | https://github.com/Grupo-BSL-Challenge-FIAP/Vitalia-DevOps-Sprint4 |
 | Projeto no Azure DevOps | https://dev.azure.com/Grupo-BSL-Vitalia/Sprint%204%20-%20Azure%20DevOps |
-| Vídeo no YouTube | `<URL vídeo>` |
+| Vídeo no YouTube | https://youtu.be/A4vxQnqkRtw |
 | Aplicação em nuvem (Azure Web App) | https://vitalia-sprint4-grupobsl.azurewebsites.net/ |
 | Swagger | https://vitalia-sprint4-grupobsl.azurewebsites.net/swagger/index.html |
 | Health check | https://vitalia-sprint4-grupobsl.azurewebsites.net/health/ready |
